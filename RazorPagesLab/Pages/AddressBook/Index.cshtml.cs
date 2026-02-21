@@ -6,7 +6,7 @@ namespace RazorPagesLab.Pages.AddressBook;
 public class IndexModel : PageModel
 {
 	private readonly IRepo<AddressBookEntry> _repo;
-	public IEnumerable<AddressBookEntry> AddressBookEntries;
+	public IEnumerable<AddressBookEntry> AddressBookEntries { get; set; }
 
 	public IndexModel(IRepo<AddressBookEntry> repo)
 	{

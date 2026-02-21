@@ -1,5 +1,5 @@
 ﻿@page
-@model IndexModel
+@model RazorPagesLab.Pages.AddressBook.IndexModel
 @{
 	ViewData["Title"] = "Address Book";
 }
@@ -7,28 +7,32 @@
 <h1>Address Book Entries</h1>
 
 <div class="container-fluid">
-	<a asp-page="Create">Create New Entry</a>
+	<a asp-page="Create" class="btn btn-success">Create New Entry</a>
 
-	<ul class="list-group">
-		@foreach (var entry in Model.AddressBookEntries)
-		{
-			<li class="list-group-item">
-				<div class="row">
-					<div class="col-md-8">
-						@($"{entry.Line1} " +
-						$"{entry.City}, {entry.State} {entry.PostalCode}")
+	<div class="mt-3">
+		<ul class="list-group">
+			@foreach (var entry in Model.AddressBookEntries)
+			{
+				<li class="list-group-item">
+					<div class="row">
+						<div class="col-md-8">
+							@($"{entry.Line1} " +
+													$"{entry.City}, {entry.State} {entry.PostalCode}")
 					</div>
 					<div class="col-md-2">
 						<a asp-page="Edit"
-							asp-route-id="@entry.Id">
+						   asp-route-id="@entry.Id" class="btn btn-secondary">
 							Edit
 						</a>
 					</div>
 					<div class="col-md-2">
-						<a asp-page="Delete">Delete</a>
+						<a asp-page="Delete" asp-route-id="@entry.Id" class="btn btn-danger">
+							Delete
+						</a>
 					</div>
 				</div>
 			</li>
-		}
-	</ul>
+						}
+		</ul>
+	</div>
 </div>
