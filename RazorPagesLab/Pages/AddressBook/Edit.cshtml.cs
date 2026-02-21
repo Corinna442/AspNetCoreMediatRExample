@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -19,14 +21,50 @@ public class EditModel : PageModel
 	[BindProperty]
 	public UpdateAddressRequest UpdateAddressRequest { get; set; }
 
-	public void OnGet(Guid id)
+	public IActionResult OnGet(Guid id)
 	{
-		// Todo: Use repo to get address book entry, set UpdateAddressRequest fields.
+		// Create specification that matches entry by ID
+		var specification = new EntryByIdSpecification(id);
+
+		// Use repo to find matching entries
+		var entry = _repo.Find(specification).FirstOrDefault(); // Fetches existing record
+
+		// Check for entry
+		if (entry == null) {
+			return RedirectToPage("Index"); // redirect
+		}
+
+		// Populate the request so Razor can pre-fill the form
+		UpdateAddressRequest = new UpdateAddressRequest()
+		{
+			Id = entry.Id,
+			Line1 = entry.Line1,
+			Line2 = entry.Line2,
+			City = entry.City,
+			State = entry.State,
+			PostalCode = entry.PostalCode
+		};
+
+		return Page();
 	}
 
-	public ActionResult OnPost()
+	public async Task<IActionResult> OnPost()
 	{
-		// Todo: Use mediator to send a "command" to update the address book entry, redirect to entry list.
+	
+		if (ModelState.IsValid)
+		{
+            // Send the update request through MediatR.
+            // This decouples the Razor Page from update logic
+            // The correct handler will recieve the request and use the repo
+            // to perform the update.
+            _ = await _mediator.Send(UpdateAddressRequest);
+
+            // After a successful update, redirect back to
+            // the address book list page.
+            return RedirectToPage("Index");
+		}
+
+		// If any validation fails, redisplay the page and show validation messages.
 		return Page();
 	}
 }
